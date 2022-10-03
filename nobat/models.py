@@ -4,33 +4,35 @@ from django.contrib.auth.models import (
 )
 
 
+# Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth, password=None):
+    def create_user(self, email, username, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
         """
         if not email:
             raise ValueError('Users must have an email address')
-
+        if not username:
+            raise ValueError('Users must have an username')
         user = self.model(
             email=self.normalize_email(email),
-            date_of_birth=date_of_birth,
+
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, password=None):
+    def create_superuser(self, email, username, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
             email,
+            username,
             password=password,
-            date_of_birth=date_of_birth,
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -43,14 +45,15 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    date_of_birth = models.DateField()
-    is_active = models.BooleanField(default=True)
+    username = models.CharField(max_length=255)
+
+    is_hair_style = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth']
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email
