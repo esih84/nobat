@@ -22,11 +22,18 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 
-
-
 class RegistrationView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegistrationView_hair_style(APIView):
+    def post(self, request):
+        serializer = RegistrationSerializer_hair_style(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
